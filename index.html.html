@@ -1,0 +1,785 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test de Profil Entrepreneurial - Complet & Exports</title>
+    <!-- Inclusion de la police Raleway depuis Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Inclusion de Chart.js pour le diagramme radar -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --primary: #00A4A7;
+            --primary-hover: #008285;
+            --bg-color: #f4fcfc;
+            --card-bg: #ffffff;
+            --text-color: #1e293b;
+            --text-light: #64748b;
+            --border: #e2e8f0;
+            --success: #10b981;
+        }
+
+        body {
+            font-family: 'Raleway', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .app-container {
+            width: 100%;
+            max-width: 850px;
+            background: var(--card-bg);
+            border-radius: 16px;
+            box-shadow: 0 10px 25px -5px rgba(0, 164, 167, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            border-top: 5px solid var(--primary);
+            margin-bottom: 20px;
+        }
+
+        .app-header {
+            background: linear-gradient(135deg, #007A7C, #00A4A7);
+            color: white;
+            padding: 24px 30px;
+            text-align: center;
+        }
+
+        .app-header h1 {
+            margin: 0 0 8px 0;
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        .app-header p {
+            margin: 0;
+            opacity: 0.95;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .progress-bar-container {
+            background: #e2e8f0;
+            height: 6px;
+            width: 100%;
+        }
+
+        .progress-bar {
+            background: var(--primary);
+            height: 100%;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .step-content {
+            padding: 30px;
+            flex-grow: 1;
+        }
+
+        .step-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .step-counter {
+            font-size: 13px;
+            color: var(--primary);
+            background: #e6f7f7;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-weight: 600;
+        }
+
+        .instructions {
+            font-size: 14px;
+            color: var(--text-light);
+            margin-bottom: 24px;
+            background: #f4fcfc;
+            padding: 12px 16px;
+            border-radius: 8px;
+            border-left: 3px solid var(--primary);
+            font-weight: 500;
+        }
+
+        .question-card {
+            background: #fff;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+            transition: border-color 0.2s;
+        }
+
+        .question-card:hover {
+            border-color: #00A4A7;
+        }
+
+        .question-text {
+            font-weight: 600;
+            margin-bottom: 16px;
+            font-size: 15px;
+            color: #0f172a;
+        }
+
+        .options-group {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+        }
+
+        @media (max-width: 600px) {
+            .options-group {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        .option-label {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 10px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            background: #fff;
+            text-align: center;
+            font-size: 13px;
+        }
+
+        .option-label input {
+            display: none;
+        }
+
+        .option-label:hover {
+            background: #f4fcfc;
+            border-color: #00A4A7;
+        }
+
+        .option-label.selected {
+            background: #e6f7f7;
+            border-color: var(--primary);
+            color: var(--primary);
+            font-weight: 700;
+            box-shadow: 0 0 0 1px var(--primary);
+        }
+
+        .option-number {
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .option-text {
+            font-size: 11px;
+            color: var(--text-light);
+            font-weight: 500;
+        }
+
+        .option-label.selected .option-text {
+            color: #007A7C;
+        }
+
+        .nav-buttons {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 30px;
+            background: #f8fafc;
+            border-top: 1px solid var(--border);
+        }
+
+        .btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+            font-family: 'Raleway', sans-serif;
+        }
+
+        .btn:hover {
+            background: var(--primary-hover);
+        }
+
+        .btn-secondary {
+            background: #e2e8f0;
+            color: #475569;
+        }
+
+        .btn-secondary:hover {
+            background: #cbd5e1;
+        }
+
+        .export-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .btn-export {
+            background: #0f172a;
+            color: white;
+            border: none;
+            padding: 10px 16px;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+            font-family: 'Raleway', sans-serif;
+        }
+
+        .btn-export:hover {
+            background: #334155;
+        }
+
+        .results-container {
+            padding: 30px;
+            display: none;
+        }
+
+        .chart-box {
+            position: relative;
+            width: 100%;
+            max-width: 550px;
+            height: 450px;
+            margin: 0 auto 30px auto;
+        }
+
+        .score-summary {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        @media (max-width: 600px) {
+            .score-summary {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .score-card {
+            background: #f4fcfc;
+            border: 1px solid #b2e4e5;
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+        }
+
+        .score-card h4 {
+            margin: 0 0 5px 0;
+            font-size: 13px;
+            color: var(--text-light);
+            text-transform: uppercase;
+            font-weight: 600;
+        }
+
+        .score-card .value {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .error-message {
+            color: #ef4444;
+            font-size: 13px;
+            display: none;
+            font-weight: 600;
+        }
+
+        /* Section Politique de confidentialité / Footer */
+        .privacy-footer {
+            width: 100%;
+            max-width: 850px;
+            background: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+            padding: 20px 30px;
+            box-sizing: border-box;
+            font-size: 12px;
+            color: var(--text-light);
+            line-height: 1.5;
+            margin-top: 10px;
+        }
+
+        .privacy-footer h3 {
+            font-size: 14px;
+            color: var(--text-color);
+            margin-top: 0;
+            margin-bottom: 8px;
+            font-weight: 700;
+        }
+
+        .privacy-footer p {
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+
+<div class="app-container">
+    <div class="app-header">
+        <h1>Évaluation du Profil Entrepreneurial</h1>
+        <p>Évaluation professionnelle et personnalisée</p>
+    </div>
+    
+    <div class="progress-bar-container">
+        <div class="progress-bar" id="progressBar"></div>
+    </div>
+
+    <!-- Conteneur des étapes du questionnaire -->
+    <div id="quizContainer"></div>
+
+    <!-- Conteneur des résultats -->
+    <div id="resultsContainer" class="results-container">
+        <h2 style="text-align: center; margin-top: 0; color: #007A7C; font-weight: 700;">Vos Résultats Complets</h2>
+        <p style="text-align: center; color: var(--text-light); margin-bottom: 25px; font-weight: 500;">Comparaison de vos scores (en %) par rapport à la moyenne des entrepreneurs</p>
+        
+        <div class="score-summary" id="scoreSummaryCards"></div>
+
+        <div class="chart-box">
+            <canvas id="radarChart"></canvas>
+        </div>
+
+        <div style="text-align: center; margin-top: 20px;">
+            <p style="font-size: 14px; font-weight: 600; color: var(--text-light); margin-bottom: 10px;">Exporter vos résultats (Graphique inclus dans Word & PDF) :</p>
+            <div class="export-buttons">
+                <button class="btn-export" onclick="exportWord()">📄 Exporter en Word + Graphique</button>
+                <button class="btn-export" onclick="exportExcel()">📊 Exporter en Excel (.csv)</button>
+                <button class="btn-export" onclick="exportPDF()">🖨️ Imprimer / PDF avec Graphique</button>
+                <button class="btn-export" onclick="exportJSON()">📦 Exporter en JSON</button>
+            </div>
+        </div>
+
+        <div style="text-align: center; margin-top: 30px;">
+            <button class="btn btn-secondary" onclick="location.reload()">Recommencer le test</button>
+        </div>
+    </div>
+
+    <!-- Navigation -->
+    <div class="nav-buttons" id="navButtons">
+        <button class="btn btn-secondary" id="prevBtn" onclick="prevStep()" style="display: none;">Précédent</button>
+        <div id="errorMsg" class="error-message">Veuillez répondre à toutes les questions de cette étape.</div>
+        <button class="btn" id="nextBtn" onclick="nextStep()">Suivant</button>
+    </div>
+</div>
+
+<!-- Encadré Politique de confidentialité / RGPD -->
+<div class="privacy-footer">
+    <h3>Politique de confidentialité & Protection des données (RGPD)</h3>
+    <p>Ce test de profil entrepreneurial est entièrement anonyme. Vos réponses et les calculs associés sont traités en temps réel directement dans votre navigateur web (côté client). Aucune donnée personnelle, aucun score et aucune réponse aux questionnaires ne sont collectés, stockés ou transmis à un serveur tiers. Les fichiers exportés (Word, Excel, JSON, PDF) sont générés localement sur votre appareil.</p>
+</div>
+
+<script>
+    const stepsData = [
+        {
+            title: "Étape 1 sur 5 : Motivations & Premières Aptitudes",
+            instruction: "Veuillez indiquer le degré d'importance que vous accordez à chacune des propositions suivantes.",
+            questions: [
+                { id: 1, text: "J’aime me donner des défis lorsque j’entreprends un nouveau projet", cat: "defis", isReverse: false },
+                { id: 2, text: "Je suis assez à l’aise dans les situations complexes", cat: "ambiguite", isReverse: false },
+                { id: 3, text: "Là où les autres voient des problèmes, moi je vois des possibilités", cat: "creativite", isReverse: false },
+                { id: 4, text: "Je me préoccupe toujours de ce que vont penser les autres avant de faire quelque chose d’important", cat: "confiance", isReverse: true },
+                { id: 5, text: "Je fais preuve de curiosité et je cherche continuellement à découvrir", cat: "creativite", isReverse: false },
+                { id: 6, text: "Je suis beaucoup moins efficace dans des situations stressantes", cat: "ambiguite", isReverse: true },
+                { id: 7, text: "Je veux bâtir quelque chose qui sera reconnu publiquement", cat: "pouvoir", isReverse: false },
+                { id: 8, text: "Face aux difficultés, je recherche des alternatives de solutions", cat: "perseverance", isReverse: false },
+                { id: 9, text: "Pour moi, ce qui compte, c’est l’action", cat: "action", isReverse: false },
+                { id: 10, text: "Pour moi, il est possible d’influencer son destin", cat: "destinee", isReverse: false }
+            ]
+        },
+        {
+            title: "Étape 2 sur 5 : Aptitudes & Réalisation",
+            instruction: "Veuillez indiquer le degré d'importance que vous accordez à chacune des propositions suivantes.",
+            questions: [
+                { id: 11, text: "Je suis capable d’imaginer comment on peut faire marcher les choses", cat: "creativite", isReverse: false },
+                { id: 12, text: "Lorsque j’entreprends un projet, j’ai confiance de le réussir", cat: "confiance", isReverse: false },
+                { id: 13, text: "Je vise l’excellence dans tout ce que j’entreprends", cat: "realisation", isReverse: false },
+                { id: 14, text: "Selon moi, on fait toujours un peu sa chance", cat: "destinee", isReverse: true },
+                { id: 15, text: "De façon générale, je me méfie de mon instinct", cat: "confiance", isReverse: true },
+                { id: 16, text: "Je n’ai pas de difficulté à travailler pour quelqu’un d’autre", cat: "autonomie", isReverse: true },
+                { id: 17, text: "J’essaie d’exceller et d’être au premier rang dans mon domaine de compétences", cat: "realisation", isReverse: false },
+                { id: 18, text: "Pour moi, prendre des risques, c’est comme prendre un billet de loterie, c’est une question de chance", cat: "destinee", isReverse: true },
+                { id: 19, text: "Je suis capable de voir plusieurs solutions à un problème", cat: "creativite", isReverse: false },
+                { id: 20, text: "Je préfère avoir la décision finale", cat: "pouvoir", isReverse: false }
+            ]
+        },
+        {
+            title: "Étape 3 sur 5 : Persévérance & Résilience",
+            instruction: "Veuillez indiquer le degré d'importance que vous accordez à chacune des propositions suivantes.",
+            questions: [
+                { id: 21, text: "J’essaie toujours de tirer des leçons de mes échecs", cat: "perseverance", isReverse: false },
+                { id: 22, text: "Pour moi, tout est possible si je crois que je peux le faire", cat: "confiance", isReverse: false },
+                { id: 23, text: "Je préfère m’en tenir aux bonnes vieilles façons de faire", cat: "creativite", isReverse: true },
+                { id: 24, text: "La réussite est surtout une affaire de chance", cat: "destinee", isReverse: true },
+                { id: 25, text: "Un bon niveau de stress me stimule", cat: "ambiguite", isReverse: false },
+                { id: 26, text: "J’ai de la facilité à motiver les autres à travailler avec moi", cat: "pouvoir", isReverse: false },
+                { id: 27, text: "Je ressens souvent un blocage face à la complexité des situations", cat: "ambiguite", isReverse: true },
+                { id: 28, text: "Je peux facilement imaginer plusieurs façons de satisfaire un besoin", cat: "creativite", isReverse: false },
+                { id: 29, text: "Après un revers, je suis capable de me ramasser et de me reprendre", cat: "perseverance", isReverse: false },
+                { id: 30, text: "Je ne suis pas toujours en mesure de faire des sacrifices pour réussir", cat: "realisation", isReverse: true }
+            ]
+        },
+        {
+            title: "Étape 4 sur 5 : Ambition & Gestion de l'Incertitude",
+            instruction: "Veuillez indiquer le degré d'importance que vous accordez à chacune des propositions suivantes.",
+            questions: [
+                { id: 31, text: "Je n’aime pas influencer les autres", cat: "pouvoir", isReverse: true },
+                { id: 32, text: "Pour ressentir de la satisfaction envers moi-même, j’entreprends des projets faciles", cat: "defis", isReverse: true },
+                { id: 33, text: "Quand j’entreprends un projet, je ne crois pas toujours en mes capacités à le mener à bien", cat: "confiance", isReverse: true },
+                { id: 34, text: "J’aime diriger les autres", cat: "pouvoir", isReverse: false },
+                { id: 35, text: "J’essaie toujours de prendre des risques calculés", cat: "ambiguite", isReverse: false },
+                { id: 36, text: "J’ai de la difficulté à fonctionner dans les situations ambiguës et incertaines", cat: "ambiguite", isReverse: true },
+                { id: 37, text: "Je suis toujours en train de lancer de nouveaux projets", cat: "defis", isReverse: false },
+                { id: 38, text: "J’ai de la difficulté à anticiper les événements, les tendances", cat: "creativite", isReverse: true },
+                { id: 39, text: "J’aime bien les situations où il y a des conventions à respecter", cat: "autonomie", isReverse: true },
+                { id: 40, text: "Aujourd’hui, sans beaucoup d’argent, on ne peut pas entreprendre grand-chose", cat: "realisation", isReverse: false }
+            ]
+        },
+        {
+            title: "Étape 5 sur 5 : Action & Autonomie Finale",
+            instruction: "Veuillez indiquer le degré d'importance que vous accordez à chacune des propositions suivantes.",
+            questions: [
+                { id: 41, text: "Avoir trop d’ambition est souvent mal vu", cat: "defis", isReverse: true },
+                { id: 42, text: "J’ai tendance à remettre à plus tard les tâches difficiles", cat: "action", isReverse: true },
+                { id: 43, text: "Je suis du genre à voir le verre à moitié vide plutôt qu’à moitié plein", cat: "confiance", isReverse: true },
+                { id: 44, text: "Il y a un temps pour la réflexion, mais il y a surtout un temps pour l’action", cat: "action", isReverse: false },
+                { id: 45, text: "Je n’ai pas peur de prendre des initiatives", cat: "action", isReverse: false },
+                { id: 46, text: "Peu importe ce que l’on fait, ça ne dépend pas de nous", cat: "destinee", isReverse: true },
+                { id: 47, text: "Je préfère être ma propre patronne ou mon propre patron", cat: "autonomie", isReverse: false },
+                { id: 48, text: "Je ne considère pas que j’ai plus d’ambition que les autres", cat: "defis", isReverse: true },
+                { id: 49, text: "Je donne toujours le meilleur de moi-même dans tout ce que j’entreprends", cat: "realisation", isReverse: false },
+                { id: 50, text: "Je gère bien mon stress dans les situations ambiguës et incertaines", cat: "ambiguite", isReverse: false }
+            ]
+        }
+    ];
+
+    let currentStep = 0;
+    const userAnswers = {};
+
+    const dimensionsMap = {
+        realisation: { name: "Besoin de réalisation", maxScore: 20, moyScore: 17 },
+        pouvoir: { name: "Attrait du pouvoir / contrôle", maxScore: 20, moyScore: 17 },
+        defis: { name: "Besoin de défis / ambition", maxScore: 20, moyScore: 16 },
+        autonomie: { name: "Recherche d'autonomie / liberté", maxScore: 16, moyScore: 12 },
+        perseverance: { name: "Persévérance / détermination", maxScore: 16, moyScore: 14 },
+        confiance: { name: "Confiance en soi / enthousiasme", maxScore: 16, moyScore: 13 },
+        ambiguite: { name: "Tolérance à l'ambiguïté", maxScore: 24, moyScore: 19 },
+        creativite: { name: "Créativité / imagination", maxScore: 24, moyScore: 21 },
+        destinee: { name: "Influencer sa destinée", maxScore: 24, moyScore: 20 },
+        action: { name: "Orienté vers l'action", maxScore: 20, moyScore: 17 }
+    };
+
+    function renderStep() {
+        const container = document.getElementById('quizContainer');
+        const stepData = stepsData[currentStep];
+        
+        const progress = ((currentStep) / stepsData.length) * 100;
+        document.getElementById('progressBar').style.width = progress + '%';
+
+        let html = `
+            <div class="step-content">
+                <div class="step-title">
+                    <span>${stepData.title}</span>
+                    <span class="step-counter">Étape ${currentStep + 1} / ${stepsData.length}</span>
+                </div>
+                <div class="instructions">${stepData.instruction}</div>
+        `;
+
+        stepData.questions.forEach(q => {
+            const currentVal = userAnswers[q.id] || '';
+            html += `
+                <div class="question-card">
+                    <div class="question-text">${q.id}. ${q.text}</div>
+                    <div class="options-group">
+                        <label class="option-label ${currentVal === 1 ? 'selected' : ''}" onclick="selectOption(${q.id}, 1)">
+                            <input type="radio" name="q_${q.id}" value="1" ${currentVal === 1 ? 'checked' : ''}>
+                            <span class="option-number">1</span>
+                            <span class="option-text">Totalement en désaccord</span>
+                        </label>
+                        <label class="option-label ${currentVal === 2 ? 'selected' : ''}" onclick="selectOption(${q.id}, 2)">
+                            <input type="radio" name="q_${q.id}" value="2" ${currentVal === 2 ? 'checked' : ''}>
+                            <span class="option-number">2</span>
+                            <span class="option-text">Plutôt en désaccord</span>
+                        </label>
+                        <label class="option-label ${currentVal === 3 ? 'selected' : ''}" onclick="selectOption(${q.id}, 3)">
+                            <input type="radio" name="q_${q.id}" value="3" ${currentVal === 3 ? 'checked' : ''}>
+                            <span class="option-number">3</span>
+                            <span class="option-text">Plutôt en accord</span>
+                        </label>
+                        <label class="option-label ${currentVal === 4 ? 'selected' : ''}" onclick="selectOption(${q.id}, 4)">
+                            <input type="radio" name="q_${q.id}" value="4" ${currentVal === 4 ? 'checked' : ''}>
+                            <span class="option-number">4</span>
+                            <span class="option-text">Totalement en accord</span>
+                        </label>
+                    </div>
+                </div>
+            `;
+        });
+
+        html += `</div>`;
+        container.innerHTML = html;
+
+        document.getElementById('prevBtn').style.display = currentStep === 0 ? 'none' : 'block';
+        document.getElementById('nextBtn').innerText = currentStep === stepsData.length - 1 ? 'Voir mes résultats' : 'Suivant';
+        document.getElementById('errorMsg').style.display = 'none';
+    }
+
+    function selectOption(qId, val) {
+        userAnswers[qId] = val;
+        const cards = document.querySelectorAll(`input[name="q_${qId}"]`);
+        cards.forEach(input => {
+            input.closest('.option-label').classList.remove('selected');
+            if (parseInt(input.value) === val) {
+                input.closest('.option-label').classList.add('selected');
+            }
+        });
+        document.getElementById('errorMsg').style.display = 'none';
+    }
+
+    function validateCurrentStep() {
+        const stepData = stepsData[currentStep];
+        for (let q of stepData.questions) {
+            if (!userAnswers[q.id]) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    function nextStep() {
+        if (!validateCurrentStep()) {
+            document.getElementById('errorMsg').style.display = 'block';
+            return;
+        }
+
+        if (currentStep < stepsData.length - 1) {
+            currentStep++;
+            renderStep();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        } else {
+            showResults();
+        }
+    }
+
+    function prevStep() {
+        if (currentStep > 0) {
+            currentStep--;
+            renderStep();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    }
+
+    function calculateScores() {
+        const dimScores = {};
+        for (let key in dimensionsMap) {
+            dimScores[key] = 0;
+        }
+
+        stepsData.forEach(step => {
+            step.questions.forEach(q => {
+                let rawVal = userAnswers[q.id] || 1;
+                let scoreToAdd = q.isReverse ? (5 - rawVal) : rawVal;
+                dimScores[q.cat] = (dimScores[q.cat] || 0) + scoreToAdd;
+            });
+        });
+        return dimScores;
+    }
+
+    let calculatedScoresCache = {};
+    let radarChartInstance = null;
+
+    function showResults() {
+        document.getElementById('quizContainer').style.display = 'none';
+        document.getElementById('navButtons').style.display = 'none';
+        document.getElementById('progressBar').style.width = '100%';
+        document.getElementById('resultsContainer').style.display = 'block';
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+
+        const scores = calculateScores();
+        calculatedScoresCache = scores;
+        let totalScore = Object.values(scores).reduce((a, b) => a + b, 0);
+
+        const summaryCards = document.getElementById('scoreSummaryCards');
+        summaryCards.innerHTML = `
+            <div class="score-card">
+                <h4>Score Général</h4>
+                <div class="value">${totalScore}</div>
+            </div>
+            <div class="score-card">
+                <h4>Motivations</h4>
+                <div class="value">${scores.realisation + scores.pouvoir + scores.defis + scores.autonomie}</div>
+            </div>
+            <div class="score-card">
+                <h4>Aptitudes & Attitudes</h4>
+                <div class="value">${totalScore - (scores.realisation + scores.pouvoir + scores.defis + scores.autonomie)}</div>
+            </div>
+        `;
+
+        const labels = [];
+        const userPercentages = [];
+        const moyPercentages = [];
+
+        for (let key in dimensionsMap) {
+            labels.push(dimensionsMap[key].name);
+            const userScore = scores[key] || 0;
+            const max = dimensionsMap[key].maxScore;
+            const moy = dimensionsMap[key].moyScore;
+            
+            userPercentages.push(Math.round((userScore / max) * 100));
+            moyPercentages.push(Math.round((moy / max) * 100));
+        }
+
+        const ctx = document.getElementById('radarChart').getContext('2d');
+        if (radarChartInstance) {
+            radarChartInstance.destroy();
+        }
+        radarChartInstance = new Chart(ctx, {
+            type: 'radar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Vos résultats (%)',
+                    data: userPercentages,
+                    backgroundColor: 'rgba(0, 164, 167, 0.2)',
+                    borderColor: '#00A4A7',
+                    pointBackgroundColor: '#00A4A7',
+                    pointBorderColor: '#fff',
+                    borderWidth: 2
+                }, {
+                    label: 'Moyenne entrepreneurs (%)',
+                    data: moyPercentages,
+                    backgroundColor: 'rgba(220, 38, 38, 0.05)',
+                    borderColor: '#dc2626',
+                    borderDash: [5, 5],
+                    pointBackgroundColor: '#dc2626',
+                    pointBorderColor: '#fff',
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    r: {
+                        angleLines: { display: true, color: '#e2e8f0' },
+                        grid: { color: '#e2e8f0' },
+                        suggestedMin: 0,
+                        suggestedMax: 100,
+                        ticks: { stepSize: 20, callback: (v) => v + '%' }
+                    }
+                },
+                plugins: {
+                    legend: { position: 'bottom' }
+                }
+            }
+        });
+    }
+
+    function exportJSON() {
+        const data = {
+            titre: "Résultats du Profil Entrepreneurial",
+            scoresBruts: calculatedScoresCache,
+            details: dimensionsMap
+        };
+        const blob = new Blob([JSON.stringify(data, null, 4)], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'profil_entrepreneurial.json';
+        a.click();
+        URL.revokeObjectURL(url);
+    }
+
+    function exportExcel() {
+        let csv = 'Dimension,Votre Score,Score Max,Moyenne Entrepreneurs\n';
+        for (let key in dimensionsMap) {
+            const dim = dimensionsMap[key];
+            const score = calculatedScoresCache[key] || 0;
+            csv += `"${dim.name}",${score},${dim.maxScore},${dim.moyScore}\n`;
+        }
+        const blob = new Blob(["\ufeff" + csv], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'profil_entrepreneurial.csv';
+        a.click();
+        URL.revokeObjectURL(url);
+    }
+
+    function exportWord() {
+        const canvas = document.getElementById('radarChart');
+        const chartImgData = canvas.toDataURL('image/png');
+
+        let htmlContent = `
+            <html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
+            <head><meta charset='utf-8'><title>Rapport Profil Entrepreneurial</title></head>
+            <body style="font-family:Arial,sans-serif;">
+            <h1 style="color:#00A4A7; text-align:center;">Rapport - Profil Entrepreneurial</h1>
+            <p>Voici le détail de vos résultats par dimension ainsi que votre diagramme radar :</p>
+            
+            <div style="text-align:center; margin: 20px 0;">
+                <img src="${chartImgData}" width="500" height="400" style="max-width:100%; height:auto;" />
+            </div>
+
+            <table border="1" cellspacing="0" cellpadding="8" style="width:100%; border-collapse:collapse; border-color:#ccc;">
+                <tr style="background:#f2f2f2;">
+                    <th>Dimension</th>
+                    <th>Votre Score</th>
+                    <th>Score Max</th>
+                    <th>Moyenne Entrepreneurs</th>
+                </tr>`;
+        
+        for (let key in dimensionsMap) {
+            const dim = dimensionsMap[key];
+            const score = calculatedScoresCache[key] || 0;
+            htmlContent += `<tr>
+                <td><b>${dim.name}</b></td>
+                <td style="text-align:center;">${score}</td>
+                <td style="text-align:center;">${dim.maxScore}</td>
+                <td style="text-align:center;">${dim.moyScore}</td>
+            </tr>`;
+        }
+        
+        htmlContent += `</table></body></html>`;
+
+        const blob = new Blob(['\ufeff' + htmlContent], { type: 'application/msword' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'profil_entrepreneurial_avec_graphique.doc';
+        a.click();
+        URL.revokeObjectURL(url);
+    }
+
+    function exportPDF() {
+        window.print();
+    }
+
+    renderStep();
+</script>
+
+</body>
+</html>
